@@ -98,6 +98,13 @@ describe('', () => {
     expect(authSpy).toHaveBeenCalledWith('any_email@mail.com', 'any_password')
   })
 
+  test('Should returns 500 if Authentication throws', async () => {
+    const { sut, authenticationStub } = makeSut()
+    jest.spyOn(authenticationStub, 'auth').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
   test('Should returns 401 if Authentication fails', async () => {
     const { sut, authenticationStub } = makeSut()
     // @ts-expect-error
