@@ -1,6 +1,7 @@
 import { makeSignUpValidation } from './signup-validation'
 import { ValidationComposite } from '../../presentation/helpers/validators/validation-composite'
 import { RequiredFieldValidation } from '../../presentation/helpers/validators/required-field-validation'
+import { CompareFieldValidation } from '../../presentation/helpers/validators/compare-field-validation'
 
 jest.mock('../../presentation/helpers/validators/validation-composite')
 
@@ -11,7 +12,8 @@ describe('SignUpValidation Factory', () => {
       new RequiredFieldValidation('email'),
       new RequiredFieldValidation('name'),
       new RequiredFieldValidation('password'),
-      new RequiredFieldValidation('passwordConfirmation')
+      new RequiredFieldValidation('passwordConfirmation'),
+      new CompareFieldValidation('password', 'passwordConfirmation')
     ])
   })
 })
