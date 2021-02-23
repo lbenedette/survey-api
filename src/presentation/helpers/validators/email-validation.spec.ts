@@ -26,7 +26,7 @@ const makeSut = (): SutTypes => {
 }
 
 describe('Email Validation', () => {
-  test('Should return an error with if an invalid email is provided', async () => {
+  test('Should return a InvalidParamError with if an invalid email is provided', async () => {
     const { sut, emailValidatorStub } = makeSut()
     jest.spyOn(emailValidatorStub, 'isValid').mockReturnValueOnce(false)
     const error = await sut.validate({ email: 'invalid_email' })
