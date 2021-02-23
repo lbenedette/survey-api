@@ -1,5 +1,6 @@
 import { EmailValidation } from './email-validation'
 import { EmailValidator } from '../../protocols/email-validator'
+import { InvalidParamError } from '../../errors'
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -25,6 +26,13 @@ const makeSut = (): SutTypes => {
 }
 
 describe('Email Validation', () => {
+  test('Should return an error with if an invalid email is provided', async () => {
+    const { sut, emailValidatorStub } = makeSut()
+    jest.spyOn(emailValidatorStub, 'isValid').mockReturnValueOnce(false)
+    const error = await sut.validate({ email: 'invalid_email' })
+    expect(error).toEqual(new InvalidParamError('email'))
+  })
+
   test('Should call EmailValidator with correct email', () => {
     const { sut, emailValidatorStub } = makeSut()
     const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid')
