@@ -2,6 +2,7 @@ import { AccountModel } from '../../../domain/models/account'
 import { LoadAccountByEmailRepository } from '../../protocols/db/load-account-by-email-repository'
 import { DbAuthentication } from './db-authentication'
 import { AuthenticationModel } from '../../../domain/use-cases/authentication'
+import { HashComparer } from '../../protocols/criptography/hash-comparer'
 
 const makeFakeAuthentication = (): AuthenticationModel => ({
   email: 'any_email@mail.com',
@@ -23,17 +24,29 @@ const makeLoadAccountByEmailRepository = (): LoadAccountByEmailRepository => {
   return new LoadAccountByEmailRepositoryStub()
 }
 
+const makeHashComparer = (): HashComparer => {
+  class HashComparerStub implements HashComparer {
+    async compare (value: string, hash: string): Promise<boolean> {
+      return await new Promise(resolve => resolve(true))
+    }
+  }
+  return new HashComparerStub()
+}
+
 interface sutTypes {
   sut: DbAuthentication
   loadAccountByEmailRepositoryStub: LoadAccountByEmailRepository
+  hashComparerSub: HashComparer
 }
 
 const makeSut = (): sutTypes => {
   const loadAccountByEmailRepositoryStub = makeLoadAccountByEmailRepository()
-  const sut = new DbAuthentication(loadAccountByEmailRepositoryStub)
+  const hashComparerSub = makeHashComparer()
+  const sut = new DbAuthentication(loadAccountByEmailRepositoryStub, hashComparerSub)
   return {
     sut,
-    loadAccountByEmailRepositoryStub
+    loadAccountByEmailRepositoryStub,
+    hashComparerSub
   }
 }
 
@@ -57,5 +70,12 @@ describe('DbAuthentication UseCase', () => {
     jest.spyOn(loadAccountByEmailRepositoryStub, 'load').mockReturnValueOnce(new Promise(resolve => resolve(null)))
     const accessToken = await sut.auth(makeFakeAuthentication())
     expect(accessToken).toBeNull()
+  })
+
+  test('Should call HashComparer with correct values', async () => {
+    const { sut, hashComparerSub } = makeSut()
+    const compareStub = jest.spyOn(hashComparerSub, 'compare')
+    await sut.auth(makeFakeAuthentication())
+    expect(compareStub).toHaveBeenCalledWith('any_password', 'hashed_password')
   })
 })
