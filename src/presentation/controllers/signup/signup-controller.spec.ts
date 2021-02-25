@@ -1,8 +1,8 @@
-import { SignUpController } from './signup'
+import { SignUpController } from './signup-controller'
 import { MissingParamError } from '../../errors'
 import { AddAccount, AddAccountModel } from '../../../domain/use-cases/add-account'
 import { AccountModel } from '../../../domain/models/account'
-import { HttpRequest, Validation } from './signup-protocols'
+import { HttpRequest, Validation } from './signup-controller-protocols'
 import { badRequest, ok, serverError } from '../../helpers/http/http-helper'
 
 const makeFakeAccount = (): AccountModel => ({
