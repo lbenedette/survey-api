@@ -1,9 +1,8 @@
 import { Collection, MongoClient } from 'mongodb'
-import { string } from 'fast-glob/out/utils'
 
 export const MongoHelper = {
   client: MongoClient,
-  uri: string,
+  uri: String,
 
   async connect (uri: string): Promise<void> {
     this.uri = uri
