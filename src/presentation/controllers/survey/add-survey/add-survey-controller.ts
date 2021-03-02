@@ -1,11 +1,15 @@
 import { Controller, HttpRequest, HttpResponse, Validation } from '../../../protocols'
+import { badRequest } from '../../../helpers/http/http-helper'
 
 export class AddSurveyController implements Controller {
   constructor (private readonly validation: Validation) {
   }
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    await this.validation.validate(httpRequest.body)
+    const error = this.validation.validate(httpRequest.body)
+    if (error) {
+      return badRequest(error)
+    }
     // @ts-expect-error
     return null
   }
