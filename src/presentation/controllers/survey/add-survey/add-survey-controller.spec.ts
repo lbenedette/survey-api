@@ -1,8 +1,7 @@
 import { AddSurveyController } from './add-survey-controller'
-import { HttpRequest, Validation } from '../../../protocols'
+import { AddSurvey, AddSurveyModel, HttpRequest, Validation } from './add-survey-controller-protocols'
 import { MissingParamError } from '../../../errors'
 import { badRequest } from '../../../helpers/http/http-helper'
-import { AddSurvey, AddSurveyModel } from '../../../../domain/use-cases/add-survey'
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
