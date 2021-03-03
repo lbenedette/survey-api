@@ -5,7 +5,7 @@ import { LoadAccountByTokenRepository } from '../../protocols/db/account/load-ac
 
 const makeDecrypterStub = (): Decrypter => {
   class DecrypterStub implements Decrypter {
-    async decrypt (value: string): Promise<string | null> {
+    async decrypt (token: string): Promise<string | null> {
       return await Promise.resolve('any_value')
     }
   }
