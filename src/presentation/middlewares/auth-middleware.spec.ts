@@ -2,6 +2,7 @@ import { AuthMiddleware } from './auth-middleware'
 import { AccountModel, HttpRequest, LoadAccountByToken } from './auth-middleware-protocols'
 import { forbidden, ok, serverError } from '../helpers/http/http-helper'
 import { AccessDeniedError } from '../errors'
+import { Role } from '../../domain/models/role'
 
 const makeFakeAccount = (): AccountModel => ({
   id: 'any_id',
@@ -30,7 +31,7 @@ interface sutTypes {
   loadAccountByAccessTokenStub: LoadAccountByToken
 }
 
-const makeSut = (role?: string): sutTypes => {
+const makeSut = (role?: Role): sutTypes => {
   const loadAccountByAccessTokenStub = makeLoadAccountByAccessToken()
   const sut = new AuthMiddleware(loadAccountByAccessTokenStub, role)
   return {
@@ -47,7 +48,7 @@ describe('Auth Middleware', () => {
   })
 
   test('Should call LoadAccountByToken with correct accessToken', async () => {
-    const role = 'any_role'
+    const role = 'admin'
     const { sut, loadAccountByAccessTokenStub } = makeSut(role)
     const loadSpy = jest.spyOn(loadAccountByAccessTokenStub, 'load')
     await sut.handle(makeFakeRequest())
