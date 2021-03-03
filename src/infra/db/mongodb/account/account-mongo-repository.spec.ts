@@ -1,6 +1,7 @@
 import { MongoHelper } from '../helpers/mongo-helper'
 import { AccountMongoRepository } from './account-mongo-repository'
 import { Collection } from 'mongodb'
+import { AccountModel } from '../../../../domain/models/account'
 
 let accountCollection: Collection
 
@@ -46,15 +47,12 @@ describe('Account Mongo Repository', () => {
         email: 'any_email@mail.com',
         password: 'any_password'
       })
-      const account = await sut.loadByEmail('any_email@mail.com')
+      // @ts-expect-error
+      const account: AccountModel = await sut.loadByEmail('any_email@mail.com')
       expect(account).toBeTruthy()
-      // @ts-expect-error
       expect(account.id).toBeTruthy()
-      // @ts-expect-error
       expect(account.name).toBe('any_name')
-      // @ts-expect-error
       expect(account.email).toBe('any_email@mail.com')
-      // @ts-expect-error
       expect(account.password).toBe('any_password')
     })
 
@@ -79,6 +77,25 @@ describe('Account Mongo Repository', () => {
       const account = await accountCollection.findOne({ _id: fakeAccount._id })
       expect(account).toBeTruthy()
       expect(account.accessToken).toBe('any_token')
+    })
+  })
+
+  describe('loadByToken()', () => {
+    test('Should return an account on loadByToken without role', async () => {
+      const sut = makeSut()
+      await accountCollection.insertOne({
+        name: 'any_name',
+        email: 'any_email@mail.com',
+        password: 'any_password',
+        accessToken: 'any_token'
+      })
+      // @ts-expect-error
+      const account: AccountModel = await sut.loadByToken('any_token')
+      expect(account).toBeTruthy()
+      expect(account.id).toBeTruthy()
+      expect(account.name).toBe('any_name')
+      expect(account.email).toBe('any_email@mail.com')
+      expect(account.password).toBe('any_password')
     })
   })
 })
